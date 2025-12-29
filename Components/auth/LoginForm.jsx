@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/authService';
-import '../styles/auth.css';
+import { authService } from '../../src/services/authService';
+import '../../src/styles/auth.css';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -13,6 +13,9 @@ export default function LoginForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showResendEmail, setShowResendEmail] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
 
   const validateForm = () => {
     const newErrors = {};
@@ -56,6 +59,8 @@ export default function LoginForm() {
 
     setLoading(true);
     setErrorMessage('');
+    setShowResendEmail(false);
+    setResendMessage('');
 
     const result = await authService.login(formData.email, formData.password);
 
@@ -66,9 +71,30 @@ export default function LoginForm() {
       }, 1000);
     } else {
       setErrorMessage(`❌ ${result.message}`);
+      
+      // Se o erro for de email não verificado, mostrar opção de reenviar
+      if (result.message.includes('Verifique seu email') || result.message.includes('verificar')) {
+        setShowResendEmail(true);
+      }
     }
 
     setLoading(false);
+  };
+
+  const handleResendEmail = async () => {
+    setResendLoading(true);
+    setResendMessage('');
+
+    const result = await authService.resendVerification(formData.email);
+
+    if (result.success) {
+      setResendMessage('✅ ' + result.message);
+      setShowResendEmail(false);
+    } else {
+      setResendMessage('❌ ' + result.message);
+    }
+
+    setResendLoading(false);
   };
 
   const handleGoogleLogin = () => {
@@ -81,7 +107,27 @@ export default function LoginForm() {
         <h2>Fazer Login</h2>
         <p className="auth-subtitle">Bem-vindo de volta ao KAMBAM</p>
 
-        {errorMessage && <div className="auth-error">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="auth-error">
+            {errorMessage}
+            {showResendEmail && (
+              <button
+                type="button"
+                onClick={handleResendEmail}
+                disabled={resendLoading}
+                className="resend-email-button"
+              >
+                {resendLoading ? '📧 Enviando...' : '📧 Reenviar email de verificação'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {resendMessage && (
+          <div className={resendMessage.includes('✅') ? 'auth-success' : 'auth-error'}>
+            {resendMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">

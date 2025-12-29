@@ -29,7 +29,7 @@ export default function Kanban() {
   const [activeDragId, setActiveDragId] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -148,29 +148,39 @@ export default function Kanban() {
 
   const handleSaveTask = async (taskData) => {
     try {
+      console.log('🔍 Salvando tarefa:', taskData);
+      console.log('🔑 Token:', token);
+      
       if (taskData._id) {
         const res = await tasksAPI.update(taskData._id, taskData, token);
+        console.log('📝 Resposta update:', res);
         if (!res.success) {
           setError(res.message);
           return;
         }
       } else {
-        const res = await tasksAPI.create(
-          {
-            ...taskData,
-            order: columns[taskData.status].length,
-          },
-          token
-        );
+        // Calcular ordem baseada nas tarefas existentes
+        const tasksInStatus = tasks.filter(t => t.status === (taskData.status || 'todo'));
+        const dataToSend = {
+          ...taskData,
+          order: tasksInStatus.length,
+        };
+        console.log('📤 Enviando para criar:', dataToSend);
+        
+        const res = await tasksAPI.create(dataToSend, token);
+        console.log('📝 Resposta create:', res);
+        
         if (!res.success) {
-          setError(res.message);
+          setError(res.message || 'Erro ao criar tarefa');
+          console.error('❌ Erro na resposta:', res);
           return;
         }
       }
-      loadUserAndTasks();
+      await loadUserAndTasks();
       setEditingTask(null);
       setModalOpen(false);
     } catch (err) {
+      console.error('❌ Erro no catch:', err);
       setError('Erro ao salvar tarefa: ' + err.message);
     }
   };
@@ -203,7 +213,7 @@ export default function Kanban() {
     }
     
     // Limpar localStorage
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
     
     // Deslogar do Google
@@ -303,10 +313,16 @@ export default function Kanban() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm"
+              className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-red-500 text-white rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px]"
             >
-              <AlertCircle className="h-4 w-4" />
-              {error}
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <span className="font-medium">{error}</span>
+              <button 
+                onClick={() => setError(null)}
+                className="ml-auto text-white hover:text-red-100"
+              >
+                ✕
+              </button>
             </motion.div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { authService } from '../services/authService';
-import '../styles/auth.css';
+import { Eye, EyeOff } from 'lucide-react';
+import { authService } from '../../src/services/authService';
+import '../../src/styles/auth.css';
 
 export default function RegisterForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ export default function RegisterForm({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -133,29 +136,55 @@ export default function RegisterForm({ onSuccess }) {
 
           <div className="form-group">
             <label htmlFor="password">Senha *</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Mínimo 6 caracteres"
-              className={errors.password ? 'input-error' : ''}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Mínimo 6 caracteres"
+                className={errors.password ? 'input-error' : ''}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Mostrar/ocultar senha"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.password && <span className="error-text">{errors.password}</span>}
+            {!errors.password && formData.password.length > 0 && formData.password.length < 6 && (
+              <span className="info-text">⚠️ A senha deve ter no mínimo 6 caracteres</span>
+            )}
+            {!errors.password && formData.password.length === 0 && (
+              <span className="info-text">💡 Use no mínimo 6 caracteres para sua senha</span>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirmar Senha *</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirme sua senha"
-              className={errors.confirmPassword ? 'input-error' : ''}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirme sua senha"
+                className={errors.confirmPassword ? 'input-error' : ''}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label="Mostrar/ocultar confirmação de senha"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <span className="error-text">{errors.confirmPassword}</span>
             )}

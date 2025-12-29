@@ -55,7 +55,7 @@ router.post('/register', async (req, res) => {
       email: email.toLowerCase(),
       password,
       emailVerificationToken: crypto.createHash('sha256').update(verificationToken).digest('hex'),
-      emailVerificationTokenExpires,
+      emailVerificationTokenExpires: verificationTokenExpires,
       isEmailVerified: false,
     });
 
@@ -122,6 +122,63 @@ router.post('/verify-email', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erro ao verificar email',
+    });
+  }
+});
+
+/**
+ * REENVIAR EMAIL DE VERIFICAÇÃO
+ */
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email é obrigatório',
+      });
+    }
+
+    // Buscar usuário
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuário não encontrado',
+      });
+    }
+
+    // Verificar se já está verificado
+    if (user.isEmailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Este email já foi verificado',
+      });
+    }
+
+    // Gerar novo token de verificação
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+
+    // Atualizar token do usuário
+    user.emailVerificationToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
+    user.emailVerificationTokenExpires = verificationTokenExpires;
+    await user.save();
+
+    // Reenviar email
+    await sendVerificationEmail(email, verificationToken);
+
+    res.json({
+      success: true,
+      message: 'Email de verificação reenviado com sucesso! Verifique sua caixa de entrada',
+    });
+  } catch (error) {
+    console.error('Erro ao reenviar email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao reenviar email de verificação',
     });
   }
 });

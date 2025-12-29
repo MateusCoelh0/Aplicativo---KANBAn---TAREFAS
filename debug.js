@@ -3,7 +3,7 @@
 console.log('=== DEBUG AUTENTICAÇÃO ===');
 
 // Verificar se há token no localStorage
-const token = localStorage.getItem('authToken');
+const token = localStorage.getItem('token');
 const user = localStorage.getItem('user');
 
 console.log('Token no localStorage:', token ? '✅ SIM' : '❌ NÃO');

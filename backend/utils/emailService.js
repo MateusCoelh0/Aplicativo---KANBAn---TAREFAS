@@ -1,30 +1,54 @@
 import nodemailer from 'nodemailer';
 
 // Configurar o transporter de email
-// Para desenvolvimento, usamos Ethereal Email (fake SMTP)
-// Para produção, use um serviço real como Gmail, SendGrid, etc.
-
 let transporter;
 
 if (process.env.NODE_ENV === 'production') {
-  // Configurar para serviço de email real em produção
+  // PRODUÇÃO: SendGrid, AWS SES, Mailgun, etc.
+  const emailService = process.env.EMAIL_SERVICE;
+  
+  if (emailService === 'sendgrid') {
+    transporter = nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      auth: {
+        user: 'apikey',
+        pass: process.env.SENDGRID_API_KEY,
+      },
+    });
+  } else if (emailService === 'ses') {
+    // AWS SES
+    transporter = nodemailer.createTransport({
+      host: process.env.SES_HOST,
+      port: 587,
+      auth: {
+        user: process.env.SES_USER,
+        pass: process.env.SES_PASSWORD,
+      },
+    });
+  } else {
+    // Gmail ou outro serviço
+    transporter = nodemailer.createTransport({
+      service: emailService || 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
+} else {
+  // DESENVOLVIMENTO: Mailtrap
   transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
+    host: process.env.EMAIL_HOST || 'live.smtp.mailtrap.io',
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
   });
-} else {
-  // Para desenvolvimento, usar Ethereal Email
-  transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.mailtrap.io',
-    port: process.env.EMAIL_PORT || 2525,
-    auth: {
-      user: process.env.EMAIL_USER || 'seu_usuario_mailtrap',
-      pass: process.env.EMAIL_PASSWORD || 'sua_senha_mailtrap',
-    },
-  });
+  
+  console.log('📧 Email configurado com Mailtrap');
 }
 
 /**

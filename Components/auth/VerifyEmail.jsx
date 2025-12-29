@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { authService } from '../services/authService';
-import '../styles/auth.css';
+import { authService } from '../../src/services/authService';
+import '../../src/styles/auth.css';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();

@@ -7,7 +7,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Verificar se existe token
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
     }

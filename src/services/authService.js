@@ -57,6 +57,30 @@ export const authService = {
   },
 
   /**
+   * Reenviar email de verificação
+   */
+  resendVerification: async (email) => {
+    try {
+      const response = await fetch(`${API_URL}/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Erro ao reenviar email',
+        error: error.message,
+      };
+    }
+  },
+
+  /**
    * Login com email e senha
    */
   login: async (email, password) => {

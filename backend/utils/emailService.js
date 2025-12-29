@@ -59,11 +59,11 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@kambam.com',
+      from: process.env.EMAIL_FROM || 'noreply@kanban.com',
       to: email,
-      subject: 'Verifique seu email - KAMBAM',
+      subject: 'Verifique seu email - KANBAN',
       html: `
-        <h2>Bem-vindo ao KAMBAM!</h2>
+        <h2>Bem-vindo ao KANBAN!</h2>
         <p>Para completar seu registro, clique no link abaixo para verificar seu email:</p>
         <a href="${verificationUrl}" style="
           display: inline-block;

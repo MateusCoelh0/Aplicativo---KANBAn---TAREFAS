@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { authService } from '../../src/services/authService';
 import '../../src/styles/auth.css';
 
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const [showResendEmail, setShowResendEmail] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -105,7 +107,7 @@ export default function LoginForm() {
     <div className="auth-container">
       <div className="auth-card">
         <h2>Fazer Login</h2>
-        <p className="auth-subtitle">Bem-vindo de volta ao KAMBAM</p>
+        <p className="auth-subtitle">Seja bem vindo ao Kanban seu agendador de tarefas</p>
 
         {errorMessage && (
           <div className="auth-error">
@@ -146,15 +148,25 @@ export default function LoginForm() {
 
           <div className="form-group">
             <label htmlFor="password">Senha *</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Sua senha"
-              className={errors.password ? 'input-error' : ''}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Sua senha"
+                className={errors.password ? 'input-error' : ''}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Mostrar/ocultar senha"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
 
@@ -184,6 +196,10 @@ export default function LoginForm() {
         <p className="auth-link">
           Não tem conta? <a href="/register">Registre-se aqui</a>
         </p>
+        
+        <div className="auth-footer">
+          Desenvolvido por Mateus Coelho
+        </div>
       </div>
     </div>
   );

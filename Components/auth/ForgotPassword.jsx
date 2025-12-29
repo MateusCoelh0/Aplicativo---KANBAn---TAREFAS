@@ -207,6 +207,10 @@ export default function ForgotPassword() {
             </p>
           </>
         )}
+        
+        <div className="auth-footer">
+          Desenvolvido por Mateus Coelho
+        </div>
       </div>
     </div>
   );

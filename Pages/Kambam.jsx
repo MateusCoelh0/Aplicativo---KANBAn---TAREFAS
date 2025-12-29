@@ -349,39 +349,64 @@ export default function Kanban() {
             ))}
           </div>
 
-          {/* Drag Overlay */}
-          <DragOverlay>
+          {/* Drag Overlay - Preview do card sendo arrastado */}
+          <DragOverlay dropAnimation={{
+            duration: 200,
+            easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+          }}>
             {activeDragId ? (
               <motion.div
-                className="bg-white rounded-lg shadow-2xl border border-slate-200 p-4 cursor-grabbing"
-                style={{ width: '320px' }}
-                initial={{ scale: 0.95, rotate: -5 }}
-                animate={{ scale: 1.05, rotate: 5 }}
+                className="bg-white rounded-lg shadow-2xl border-2 border-blue-400 p-4 cursor-grabbing transform rotate-3"
+                style={{ width: '360px' }}
+                initial={{ scale: 1, rotate: 0 }}
+                animate={{ scale: 1.05, rotate: 3 }}
               >
                 {(() => {
                   const task = tasks.find(t => t._id === activeDragId);
                   if (!task) return null;
+                  
+                  const priorityColors = {
+                    alta: 'bg-red-100 text-red-700',
+                    média: 'bg-yellow-100 text-yellow-700',
+                    baixa: 'bg-green-100 text-green-700',
+                  };
+                  
                   return (
-                    <div>
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="font-semibold text-slate-800 flex-1">
+                    <div className="relative">
+                      {/* Indicador de arrasto */}
+                      <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
+                        Arrastando...
+                      </div>
+                      
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <h3 className="font-semibold text-slate-800 flex-1 text-base">
                           {task.title}
                         </h3>
-                        <GripVertical className="h-4 w-4 text-slate-400" />
+                        <GripVertical className="h-5 w-5 text-blue-400" />
                       </div>
+                      
                       {task.description && (
-                        <p className="text-sm text-slate-600 mb-2 line-clamp-2">
+                        <p className="text-sm text-slate-600 mb-3 line-clamp-3">
                           {task.description}
                         </p>
                       )}
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span className="px-2 py-1 bg-slate-100 rounded">
-                          {task.priority}
+                      
+                      <div className="flex items-center justify-between">
+                        <span className={`text-xs px-3 py-1.5 rounded-lg font-medium ${priorityColors[task.priority || 'média']}`}>
+                          {task.priority || 'Média'}
                         </span>
                         {task.dueDate && (
-                          <span>{new Date(task.dueDate).toLocaleDateString('pt-BR')}</span>
+                          <span className="text-xs text-slate-500 font-medium">
+                            📅 {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                          </span>
                         )}
                       </div>
+                      
+                      {task.assignee && (
+                        <div className="mt-3 text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                          👤 {task.assignee}
+                        </div>
+                      )}
                     </div>
                   );
                 })()}

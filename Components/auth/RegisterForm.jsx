@@ -100,7 +100,7 @@ export default function RegisterForm({ onSuccess }) {
     <div className="auth-container">
       <div className="auth-card">
         <h2>Criar Conta</h2>
-        <p className="auth-subtitle">Registre-se para usar o KAMBAM</p>
+        <p className="auth-subtitle">Seja bem vindo ao Kanban seu agendador de tarefas</p>
 
         {successMessage && <div className="auth-success">{successMessage}</div>}
         {errorMessage && <div className="auth-error">{errorMessage}</div>}
@@ -198,6 +198,10 @@ export default function RegisterForm({ onSuccess }) {
         <p className="auth-link">
           Já tem conta? <a href="/login">Faça login aqui</a>
         </p>
+        
+        <div className="auth-footer">
+          Desenvolvido por Mateus Coelho
+        </div>
       </div>
     </div>
   );

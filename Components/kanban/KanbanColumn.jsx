@@ -47,13 +47,13 @@ export default function KanbanColumn({ status, tasks, onDelete, onEdit, onAddCli
       </div>
 
       <SortableContext
-        items={tasks.map(t => t.id)}
+        items={tasks.map(t => t._id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-3 min-h-96 max-h-96 overflow-y-auto">
+        <div className="space-y-3 min-h-[600px] overflow-y-auto pr-2">
           {tasks.map((task) => (
             <TaskCard
-              key={task.id}
+              key={task._id}
               task={task}
               onEdit={onEdit}
               onDelete={onDelete}

@@ -113,6 +113,10 @@ export default function VerifyEmail() {
           background-color: #45a049;
         }
       `}</style>
+      
+      <div className="auth-footer" style={{marginTop: '40px'}}>
+        Desenvolvido por Mateus Coelho
+      </div>
     </div>
   );
 }

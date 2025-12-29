@@ -17,7 +17,7 @@ export default function TaskCard({ task, onEdit, onDelete }) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   const priorityColors = {
@@ -32,9 +32,13 @@ export default function TaskCard({ task, onEdit, onDelete }) {
       style={style}
       layout
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: isDragging ? 0.3 : 1, y: 0, scale: isDragging ? 0.95 : 1 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 border border-slate-100 cursor-grab active:cursor-grabbing group ${isDragging ? 'opacity-50' : ''}`}
+      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-4 border-2 ${
+        isDragging 
+          ? 'border-blue-400 border-dashed bg-blue-50' 
+          : 'border-slate-100'
+      } cursor-grab active:cursor-grabbing group`}
     >
       <div className="flex justify-between items-start mb-2 gap-2">
         <div 

@@ -1,51 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Trash2 } from 'lucide-react';
-import { noteService } from '../../src/services/dataService';
+import { notesAPI } from '../../src/services/api';
 
 export default function NotesSidebar({ open, onClose }) {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (open) {
+    if (open && token) {
       loadNotes();
     }
-  }, [open]);
+  }, [open, token]);
 
-  const loadNotes = () => {
+  const loadNotes = async () => {
     try {
-      const allNotes = noteService.listNotes();
-      setNotes(allNotes);
+      setLoading(true);
+      const response = await notesAPI.list(token);
+      if (response.success) {
+        setNotes(response.data || []);
+      } else {
+        setError('Erro ao carregar notas');
+      }
     } catch (err) {
       console.error('Erro ao carregar notas:', err);
+      setError('Erro ao carregar notas');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleAddNote = (e) => {
+  const handleAddNote = async (e) => {
     e.preventDefault();
     if (!newNote.title.trim() && !newNote.content.trim()) {
       return;
     }
 
     try {
-      noteService.createNote({
+      setError('');
+      const response = await notesAPI.create({
         title: newNote.title || 'Nota sem título',
         content: newNote.content,
-      });
-      setNewNote({ title: '', content: '' });
-      loadNotes();
+      }, token);
+      
+      if (response.success) {
+        setNewNote({ title: '', content: '' });
+        await loadNotes();
+      } else {
+        setError(response.message || 'Erro ao criar nota');
+      }
     } catch (err) {
       console.error('Erro ao criar nota:', err);
+      setError('Erro ao criar nota');
     }
   };
 
-  const handleDeleteNote = (id) => {
+  const handleDeleteNote = async (id) => {
     try {
-      noteService.deleteNote(id);
-      loadNotes();
+      setError('');
+      const response = await notesAPI.delete(id, token);
+      if (response.success) {
+        await loadNotes();
+      } else {
+        setError(response.message || 'Erro ao deletar nota');
+      }
     } catch (err) {
       console.error('Erro ao deletar nota:', err);
+      setError('Erro ao deletar nota');
     }
   };
 
@@ -71,6 +96,13 @@ export default function NotesSidebar({ open, onClose }) {
           </div>
 
           <div className="p-6 space-y-4">
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
             {/* New Note Form */}
             <form onSubmit={handleAddNote} className="space-y-3 p-4 bg-slate-50 rounded-lg">
               <input
@@ -93,23 +125,28 @@ export default function NotesSidebar({ open, onClose }) {
               />
               <button
                 type="submit"
-                className="w-full px-3 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 text-sm font-medium flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full px-3 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
-                Adicionar Nota
+                {loading ? 'Salvando...' : 'Adicionar Nota'}
               </button>
             </form>
 
             {/* Notes List */}
             <div className="space-y-3">
-              {notes.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-8 text-slate-400">
+                  <p className="text-sm">Carregando notas...</p>
+                </div>
+              ) : notes.length === 0 ? (
                 <div className="text-center py-8 text-slate-400">
                   <p className="text-sm">Nenhuma nota ainda</p>
                 </div>
               ) : (
                 notes.map((note) => (
                   <motion.div
-                    key={note.id}
+                    key={note._id}
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -121,7 +158,7 @@ export default function NotesSidebar({ open, onClose }) {
                         {note.title}
                       </h3>
                       <button
-                        onClick={() => handleDeleteNote(note.id)}
+                        onClick={() => handleDeleteNote(note._id)}
                         className="p-1 opacity-0 group-hover:opacity-100 hover:bg-red-100 rounded text-slate-400 hover:text-red-600 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />

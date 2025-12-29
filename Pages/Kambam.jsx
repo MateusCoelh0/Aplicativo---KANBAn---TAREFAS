@@ -262,21 +262,57 @@ export default function Kanban() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col relative overflow-hidden">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {/* Logo FlowDuo */}
               <motion.div 
-                className="h-10 w-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2"
+                whileHover={{ scale: 1.02 }}
               >
-                <Sparkles className="h-5 w-5 text-white" />
+                <svg 
+                  className="h-10 w-auto" 
+                  viewBox="0 0 200 80" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    filter: 'drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3))',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {/* F */}
+                  <path d="M 20 20 L 20 60 M 20 20 L 45 20 M 20 40 L 42 40" 
+                        stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                  
+                  {/* Círculo do O com efeito de fluxo */}
+                  <circle cx="65" cy="40" r="15" 
+                          stroke="#3b82f6" strokeWidth="4" fill="none"/>
+                  <circle cx="65" cy="40" r="8" 
+                          fill="#3b82f6" opacity="0.3"/>
+                  
+                  {/* Setas de fluxo */}
+                  <path d="M 85 35 L 95 40 L 85 45" 
+                        stroke="#3b82f6" strokeWidth="3" fill="none" strokeLinecap="round"/>
+                  <path d="M 90 40 L 105 40" 
+                        stroke="#3b82f6" strokeWidth="3" strokeLinecap="round"/>
+                  
+                  {/* D */}
+                  <path d="M 115 20 L 115 60 M 115 20 Q 145 20 145 40 Q 145 60 115 60" 
+                        stroke="#8b5cf6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                  
+                  {/* U com duplo traço */}
+                  <path d="M 155 20 L 155 45 Q 155 60 170 60 Q 185 60 185 45 L 185 20" 
+                        stroke="#8b5cf6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+                  <path d="M 157 35 L 157 45 Q 157 55 170 55 Q 183 55 183 45 L 183 35" 
+                        stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.5"/>
+                </svg>
               </motion.div>
+              
               <div>
                 <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-                  Kanban
+                  FlowDuo
                 </h1>
                 <p className="text-xs text-slate-400">
                   {user?.name ? `Bem-vindo, ${user.name}` : 'Organize suas tarefas'}
@@ -414,32 +450,36 @@ export default function Kanban() {
             ) : null}
           </DragOverlay>
         </DndContext>
-
-        {tasks.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20"
-          >
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-slate-100 mb-4">
-              <Sparkles className="h-8 w-8 text-slate-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">
-              Comece a organizar
-            </h3>
-            <p className="text-slate-400 text-sm mb-6">
-              Crie sua primeira tarefa
-            </p>
-            <button
-              onClick={() => handleAddClick('todo')}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg flex items-center gap-2 mx-auto"
-            >
-              <Plus className="h-4 w-4" />
-              Criar Tarefa
-            </button>
-          </motion.div>
-        )}
       </main>
+
+      {/* Rodapé */}
+      <footer className="bg-white border-t border-slate-100 mt-auto">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-center gap-3">
+            <p className="text-sm text-slate-600">
+              Desenvolvido por <span className="font-semibold text-slate-800">Mateus Coelho</span>
+            </p>
+            <span className="text-slate-300">|</span>
+            <a
+              href="https://www.linkedin.com/in/mateus-afranio-8302731b5"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors"
+              aria-label="LinkedIn de Mateus Coelho"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              <span className="text-sm font-medium">LinkedIn</span>
+            </a>
+          </div>
+        </div>
+      </footer>
 
       {/* Modals */}
       <TaskModal

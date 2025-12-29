@@ -1,7 +1,7 @@
 {
-  "name": "kambam-backend",
+  "name": "flowduo-backend",
   "version": "1.0.0",
-  "description": "Backend para aplicação Kanban com MongoDB e Google OAuth",
+  "description": "Backend para aplicação FlowDuo - Kanban com MongoDB e Google OAuth",
   "main": "server.js",
   "type": "module",
   "scripts": {

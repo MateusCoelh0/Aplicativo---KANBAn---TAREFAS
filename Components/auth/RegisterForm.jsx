@@ -99,8 +99,44 @@ export default function RegisterForm({ onSuccess }) {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        {/* Logo FlowDuo */}
+        <div className="logo-container">
+          <svg 
+            className="logo-svg" 
+            viewBox="0 0 200 80" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* F */}
+            <path d="M 20 20 L 20 60 M 20 20 L 45 20 M 20 40 L 42 40" 
+                  stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+            
+            {/* Círculo do O com efeito de fluxo */}
+            <circle cx="65" cy="40" r="15" 
+                    stroke="#3b82f6" strokeWidth="4" fill="none"/>
+            <circle cx="65" cy="40" r="8" 
+                    fill="#3b82f6" opacity="0.3"/>
+            
+            {/* Setas de fluxo */}
+            <path d="M 85 35 L 95 40 L 85 45" 
+                  stroke="#3b82f6" strokeWidth="3" fill="none" strokeLinecap="round"/>
+            <path d="M 90 40 L 105 40" 
+                  stroke="#3b82f6" strokeWidth="3" strokeLinecap="round"/>
+            
+            {/* D */}
+            <path d="M 115 20 L 115 60 M 115 20 Q 145 20 145 40 Q 145 60 115 60" 
+                  stroke="#8b5cf6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+            
+            {/* U com duplo traço */}
+            <path d="M 155 20 L 155 45 Q 155 60 170 60 Q 185 60 185 45 L 185 20" 
+                  stroke="#8b5cf6" strokeWidth="4" strokeLinecap="round" fill="none"/>
+            <path d="M 157 35 L 157 45 Q 157 55 170 55 Q 183 55 183 45 L 183 35" 
+                  stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.5"/>
+          </svg>
+          <h1 className="logo-text">FlowDuo</h1>
+        </div>
+        
         <h2>Criar Conta</h2>
-        <p className="auth-subtitle">Seja bem vindo ao Kanban seu agendador de tarefas</p>
+        <p className="auth-subtitle">Seja bem vindo ao FlowDuo seu agendador de tarefas</p>
 
         {successMessage && <div className="auth-success">{successMessage}</div>}
         {errorMessage && <div className="auth-error">{errorMessage}</div>}

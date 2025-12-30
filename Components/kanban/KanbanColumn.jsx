@@ -27,7 +27,7 @@ export default function KanbanColumn({ status, tasks, onDelete, onEdit, onAddCli
     <motion.div
       layout
       ref={setNodeRef}
-      className={`flex-shrink-0 w-96 bg-gradient-to-br from-slate-800 to-slate-600 rounded-xl p-4 border-2 border-slate-700 transition-all ${
+      className={`flex-shrink-0 w-[85vw] sm:w-80 lg:w-96 bg-gradient-to-br from-slate-800 to-slate-600 rounded-xl p-3 sm:p-4 border-2 border-slate-700 transition-all snap-center ${
         isOver ? 'ring-2 ring-blue-400 border-blue-400' : ''
       }`}
     >
@@ -50,7 +50,7 @@ export default function KanbanColumn({ status, tasks, onDelete, onEdit, onAddCli
         items={tasks.map(t => t._id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-3 min-h-[600px] overflow-y-auto pr-2">
+        <div className="space-y-3 min-h-[400px] sm:min-h-[600px] overflow-y-auto pr-2">
           {tasks.map((task) => (
             <TaskCard
               key={task._id}

@@ -265,9 +265,9 @@ export default function Kanban() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col relative overflow-hidden">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               {/* Logo FlowDuo */}
               <motion.div 
                 className="flex items-center gap-2"
@@ -310,37 +310,40 @@ export default function Kanban() {
                 </svg>
               </motion.div>
               
-              <div>
-                <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight truncate">
                   FlowDuo
                 </h1>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 hidden sm:block truncate">
                   {user?.name ? `Bem-vindo, ${user.name}` : 'Organize suas tarefas'}
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
               <button
                 onClick={() => setNotesOpen(true)}
-                className="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                className="p-2 sm:px-4 sm:py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                title="Notas"
               >
                 <FileText className="h-4 w-4" />
-                Notas
+                <span className="hidden sm:inline">Notas</span>
               </button>
               <button
                 onClick={() => handleAddClick('todo')}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg shadow-lg flex items-center gap-2"
+                className="p-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg shadow-lg flex items-center gap-2"
+                title="Nova Tarefa"
               >
                 <Plus className="h-4 w-4" />
-                Nova Tarefa
+                <span className="hidden md:inline">Nova Tarefa</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                className="p-2 sm:px-4 sm:py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                title="Sair"
               >
                 <LogOut className="h-4 w-4" />
-                Sair
+                <span className="hidden sm:inline">Sair</span>
               </button>
             </div>
           </div>
@@ -364,15 +367,15 @@ export default function Kanban() {
         </div>
       </header>
 
-      {/* Kanban Board */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      {/* Main Content */}
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
           onDragStart={(event) => setActiveDragId(event.active.id)}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-6 overflow-x-auto pb-6">
+          <div className="flex gap-3 sm:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory">
             {['todo', 'in_progress', 'done'].map((status) => (
               <KanbanColumn
                 key={status}
@@ -454,8 +457,8 @@ export default function Kanban() {
 
       {/* Rodapé */}
       <footer className="bg-white border-t border-slate-100 mt-auto">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-center">
             <p className="text-sm text-slate-600">
               Desenvolvido por <span className="font-semibold text-slate-800">Mateus Coelho</span>
             </p>

@@ -34,22 +34,22 @@ export default function TaskCard({ task, onEdit, onDelete }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isDragging ? 0.3 : 1, y: 0, scale: isDragging ? 0.95 : 1 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-4 border-2 ${
+      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 sm:p-4 border-2 ${
         isDragging 
           ? 'border-blue-400 border-dashed bg-blue-50' 
           : 'border-slate-100'
       } cursor-grab active:cursor-grabbing group`}
     >
-      <div className="flex justify-between items-start mb-2 gap-2">
+      <div className="flex justify-between items-start mb-2 gap-1 sm:gap-2">
         <div 
           {...attributes}
           {...listeners}
-          className="p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing mt-1 flex-shrink-0"
+          className="p-1 opacity-50 sm:opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing mt-1 flex-shrink-0"
         >
           <GripVertical className="h-4 w-4 text-slate-400" />
         </div>
-        <h3 className="font-semibold text-slate-800 text-sm flex-1">{task.title}</h3>
-        <div className="flex gap-2 flex-shrink-0">
+        <h3 className="font-semibold text-slate-800 text-sm flex-1 line-clamp-2">{task.title}</h3>
+        <div className="flex gap-1 sm:gap-2 flex-shrink-0">
           <button
             onClick={() => onEdit(task)}
             className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-600"

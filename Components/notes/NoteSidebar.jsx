@@ -82,7 +82,7 @@ export default function NotesSidebar({ open, onClose }) {
           initial={{ opacity: 0, x: 400 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 400 }}
-          className="fixed inset-y-0 right-0 w-96 bg-white shadow-xl z-50 overflow-y-auto"
+          className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-xl z-50 overflow-y-auto">
         >
           {/* Header */}
           <div className="sticky top-0 flex items-center justify-between p-6 border-b border-slate-100 bg-white">

@@ -3,7 +3,7 @@ const isDevelopment = window.location.hostname === 'localhost' || window.locatio
 
 const API_BASE_URL = isDevelopment 
   ? 'http://localhost:5000/api'  // Desenvolvimento local
-  : import.meta.env.VITE_API_URL || 'https://flowduo-backend.onrender.com/api'; // Produção
+  : 'https://flowduo-backend.onrender.com/api'; // Produção
 
 console.log('🌐 Ambiente:', isDevelopment ? 'Desenvolvimento' : 'Produção');
 console.log('🔗 API URL:', API_BASE_URL);

@@ -2,6 +2,19 @@
   "buildCommand": "npm ci && npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://www.flowduo.com.br/:path*",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "aplicativo-kambam-tarefas.vercel.app"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { 
       "source": "/(.*)", 

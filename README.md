@@ -1,84 +1,139 @@
-# 📋 FlowDuo - Agendador de Tarefas Kanban
+# 📋 FlowDuo - Sistema de Gerenciamento de Tarefas Kanban
 
 <div align="center">
 
 ![FlowDuo Logo](https://img.shields.io/badge/FlowDuo-Kanban%20Board-blue?style=for-the-badge)
 
-Sistema completo de gerenciamento de tarefas estilo Kanban com autenticação, notas e drag-and-drop intuitivo.
+Sistema completo de gerenciamento de tarefas estilo Kanban com autenticação avançada, notas e drag-and-drop intuitivo.
 
 [![React](https://img.shields.io/badge/React-18.2-61dafb?logo=react)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?logo=mongodb)](https://www.mongodb.com/)
+[![Express](https://img.shields.io/badge/Express-4.18-000000?logo=express)](https://expressjs.com/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-[Demo ao Vivo](#) | [Documentação](#-funcionalidades) | [Instalação](#-instalação) | [Deploy](#-deploy)
-
 </div>
+
+---
+
+## 📖 Índice
+
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#-tecnologias)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação](#-instalação)
+- [Configuração](#-configuração)
+- [Como Executar](#-como-executar)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Deploy](#-deploy)
+- [Documentação Adicional](#-documentação-adicional)
+
+---
+
+## 🎯 Sobre o Projeto
+
+**FlowDuo** é uma aplicação web moderna de gerenciamento de tarefas no estilo Kanban, desenvolvida para organizar projetos de forma visual e intuitiva. O sistema conta com autenticação completa, incluindo login social (Google OAuth), verificação de email, recuperação de senha e um sistema de notas integrado.
+
+### Características Principais
+- ✅ Interface moderna e responsiva
+- ✅ Autenticação completa e segura
+- ✅ Drag-and-drop fluido
+- ✅ Persistência de dados em MongoDB
+- ✅ API RESTful bem estruturada
+- ✅ Sistema de notas rápidas
+- ✅ Proteção de rotas
 
 ---
 
 ## ✨ Funcionalidades
 
 ### 🔐 Autenticação Completa
-- ✅ Registro com email e senha
-- ✅ Login com Google OAuth 2.0
-- ✅ Verificação de email
-- ✅ Recuperação de senha
-- ✅ JWT tokens seguros
+- ✅ **Registro** com email e senha
+- ✅ **Login** com email e senha
+- ✅ **Login Social** com Google OAuth 2.0
+- ✅ **Verificação de Email** obrigatória
+- ✅ **Recuperação de Senha** via email
+- ✅ **JWT Tokens** com expiração de 7 dias
+- ✅ **Proteção contra Brute Force** (bloqueio após 5 tentativas)
+- ✅ **Hash Seguro** de senhas com bcryptjs
 
-### 📊 Gerenciamento de Tarefas
-- ✅ Quadro Kanban com 3 colunas (A Fazer, Em Progresso, Concluído)
-- ✅ Drag-and-drop fluido com visual feedback
-- ✅ Criar, editar e excluir tarefas
-- ✅ Prioridades (Baixa, Média, Alta) com cores
-- ✅ Atribuir tarefas a usuários
-- ✅ Descrições detalhadas
+### 📊 Gerenciamento de Tarefas Kanban
+- ✅ **Quadro Kanban** com 3 colunas:
+  - 🆕 A Fazer (To Do)
+  - ⚙️ Em Progresso (In Progress)
+  - ✅ Concluído (Done)
+- ✅ **Drag-and-Drop** fluido com feedback visual
+- ✅ **Criar, Editar e Excluir** tarefas
+- ✅ **Prioridades** (Baixa, Média, Alta) com cores distintas
+- ✅ **Atribuir Tarefas** a usuários
+- ✅ **Descrições Detalhadas** para cada tarefa
+- ✅ **Persistência** no MongoDB
 
 ### 📝 Sistema de Notas
 - ✅ Criar notas rápidas
-- ✅ Persistência no MongoDB
 - ✅ Editar e deletar notas
 - ✅ Sidebar flutuante
+- ✅ Sincronização com o banco de dados
 
 ### 🎨 Interface Moderna
 - ✅ Design responsivo
-- ✅ Tailwind CSS
-- ✅ Animações com Framer Motion
-- ✅ Tema escuro nas colunas
+- ✅ Tema escuro nas colunas Kanban
+- ✅ Animações suaves com Framer Motion
 - ✅ Feedback visual em todas as ações
+- ✅ Ícones elegantes com Lucide React
 
 ---
 
 ## 🛠️ Tecnologias
 
 ### Frontend
-- **React 18.2** - Biblioteca UI
-- **Vite 4.5** - Build tool super rápido
-- **Tailwind CSS 3.3** - Estilização utility-first
-- **Framer Motion 10** - Animações fluidas
-- **@dnd-kit** - Drag-and-drop moderno
-- **Lucide React** - Ícones bonitos
-- **React Router 6** - Navegação
+| Tecnologia | Versão | Descrição |
+|-----------|--------|-----------|
+| **React** | 18.2 | Biblioteca JavaScript para UI |
+| **Vite** | 4.4 | Build tool moderno e rápido |
+| **React Router** | 6.30 | Navegação e rotas |
+| **Tailwind CSS** | 3.3 | Framework CSS utility-first |
+| **Framer Motion** | 10.0 | Biblioteca de animações |
+| **@dnd-kit** | 6.3 | Drag-and-drop moderno e acessível |
+| **Lucide React** | 0.263 | Conjunto de ícones SVG |
 
 ### Backend
-- **Node.js** - Runtime JavaScript
-- **Express 4.18** - Framework web
-- **MongoDB** - Banco de dados NoSQL
-- **Mongoose 8.0** - ODM para MongoDB
-- **Passport.js** - Autenticação
-- **JWT** - Tokens seguros
-- **Nodemailer** - Envio de emails
-- **bcryptjs** - Hash de senhas
+| Tecnologia | Versão | Descrição |
+|-----------|--------|-----------|
+| **Node.js** | 18+ | Runtime JavaScript |
+| **Express** | 4.18 | Framework web minimalista |
+| **MongoDB** | 6.0+ | Banco de dados NoSQL |
+| **Mongoose** | 8.0 | ODM para MongoDB |
+| **Passport.js** | 0.7 | Middleware de autenticação |
+| **JWT** | 9.0 | JSON Web Tokens |
+| **bcryptjs** | 2.4 | Hash de senhas |
+| **Nodemailer** | 6.10 | Envio de emails |
+| **CORS** | 2.8 | Cross-Origin Resource Sharing |
+
+### Ferramentas de Desenvolvimento
+- **Nodemon** - Auto-reload do servidor
+- **PostCSS** - Processamento CSS
+- **Autoprefixer** - Prefixos CSS automáticos
+- **dotenv** - Gerenciamento de variáveis de ambiente
+
+---
+
+## 📋 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- **Node.js** (versão 18 ou superior) - [Download](https://nodejs.org/)
+- **MongoDB** (versão 6.0 ou superior)
+  - **Opção 1**: [MongoDB Community Edition](https://www.mongodb.com/try/download/community) (local)
+  - **Opção 2**: [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (cloud - grátis)
+- **Git** (opcional) - [Download](https://git-scm.com/)
+- **Conta Google Cloud** (para OAuth) - [Google Cloud Console](https://console.cloud.google.com/)
+- **Conta Mailtrap** (para emails de desenvolvimento) - [Mailtrap.io](https://mailtrap.io/)
 
 ---
 
 ## 🚀 Instalação
-
-### Pré-requisitos
-- Node.js 18+ instalado
-- MongoDB instalado e rodando
-- Conta Google Cloud (para OAuth)
-- Conta Mailtrap (para emails em desenvolvimento)
 
 ### 1. Clone o Repositório
 ```bash
@@ -86,48 +141,137 @@ git clone https://github.com/seu-usuario/flowduo.git
 cd flowduo
 ```
 
-### 2. Configure o Backend
+### 2. Instale as Dependências
+
+#### Frontend
+```bash
+npm install
+```
+
+#### Backend
 ```bash
 cd backend
 npm install
-
-# Copie o arquivo de exemplo
-cp .env.example .env
-
-# Edite o .env com suas credenciais
-# MONGODB_URI, GOOGLE_CLIENT_ID, etc.
 ```
 
-### 3. Configure o Frontend
+---
+
+## ⚙️ Configuração
+
+### 1. Configurar MongoDB
+
+#### Opção A: MongoDB Local
 ```bash
-# Volte para a raiz
-cd ..
-npm install
+# Windows
+# Instale o MongoDB Community Edition
+# O MongoDB rodará automaticamente em mongodb://localhost:27017
 
-# Copie o arquivo de exemplo
-cp .env.example .env
-
-# (Opcional) Configure VITE_API_URL se necessário
+# macOS
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb-community
 ```
 
-### 4. Configure o Google OAuth
-Siga as instruções em [CONFIGURACAO_GOOGLE_OAUTH.md](CONFIGURACAO_GOOGLE_OAUTH.md)
+#### Opção B: MongoDB Atlas (Cloud)
+1. Crie uma conta em [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Crie um cluster gratuito
+3. Clique em "Connect" → "Connect your application"
+4. Copie a string de conexão
 
-### 5. Inicie os Servidores
+### 2. Configurar Google OAuth
 
-**Terminal 1 - Backend:**
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
+2. Crie um novo projeto
+3. Vá em **APIs e Serviços** → **Credenciais**
+4. Clique em **+ Criar Credenciais** → **ID do Cliente OAuth 2.0**
+5. Configure:
+   - **Tipo**: Aplicação Web
+   - **URIs de redirecionamento autorizados**:
+     ```
+     http://localhost:5000/api/auth/google/callback
+     ```
+   - **Origens JavaScript autorizadas**:
+     ```
+     http://localhost:5173
+     http://localhost:5000
+     ```
+6. Copie o **Client ID** e **Client Secret**
+
+### 3. Configurar Variáveis de Ambiente
+
+#### Backend - Crie o arquivo `backend/.env`
+```env
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/flowduo
+# OU para MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/flowduo
+
+# Google OAuth
+GOOGLE_CLIENT_ID=seu_client_id_aqui
+GOOGLE_CLIENT_SECRET=seu_client_secret_aqui
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+
+# JWT
+JWT_SECRET=sua_chave_secreta_super_segura_aqui_123456
+
+# Server
+NODE_ENV=development
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+
+# Email (Mailtrap para desenvolvimento)
+EMAIL_HOST=smtp.mailtrap.io
+EMAIL_PORT=2525
+EMAIL_USER=seu_usuario_mailtrap
+EMAIL_PASSWORD=sua_senha_mailtrap
+EMAIL_FROM=noreply@flowduo.com
+```
+
+#### Como obter credenciais do Mailtrap:
+1. Crie uma conta gratuita em [Mailtrap.io](https://mailtrap.io/)
+2. Acesse **Email Testing** → **Inboxes**
+3. Copie as credenciais SMTP
+
+---
+
+## 🏃 Como Executar
+
+### Desenvolvimento Local
+
+#### 1. Iniciar o Backend
 ```bash
 cd backend
-npm start
+npm run dev
 ```
+O servidor backend estará rodando em `http://localhost:5000`
 
-**Terminal 2 - Frontend:**
+#### 2. Iniciar o Frontend (em outro terminal)
 ```bash
 npm run dev
 ```
+A aplicação frontend estará disponível em `http://localhost:5173`
 
-### 6. Acesse o Aplicativo
-Abra http://localhost:5173 no navegador
+### Acessar a Aplicação
+
+1. Abra o navegador em `http://localhost:5173`
+2. Crie uma nova conta em `/register`
+3. Verifique o email no Mailtrap
+4. Faça login e comece a usar!
+
+### Scripts Disponíveis
+
+#### Frontend
+```bash
+npm run dev      # Inicia servidor de desenvolvimento
+npm run build    # Build para produção
+npm run preview  # Preview do build de produção
+```
+
+#### Backend
+```bash
+npm start        # Inicia servidor em produção
+npm run dev      # Inicia servidor com Nodemon (auto-reload)
+```
 
 ---
 
@@ -135,245 +279,140 @@ Abra http://localhost:5173 no navegador
 
 ```
 flowduo/
-├── backend/
+├── backend/                    # Servidor Node.js/Express
 │   ├── config/
-│   │   ├── database.js      # Configuração MongoDB
-│   │   └── passport.js      # Configuração OAuth
+│   │   ├── database.js        # Configuração MongoDB
+│   │   └── passport.js        # Configuração OAuth
 │   ├── middleware/
-│   │   └── auth.js          # Middleware JWT
+│   │   └── auth.js            # Middleware JWT
 │   ├── models/
-│   │   ├── User.js          # Schema de usuário
-│   │   ├── Task.js          # Schema de tarefa
-│   │   └── Note.js          # Schema de nota
+│   │   ├── User.js            # Schema de usuário
+│   │   ├── Task.js            # Schema de tarefa
+│   │   └── Note.js            # Schema de nota
 │   ├── routes/
-│   │   ├── auth.js          # Rotas de autenticação
-│   │   ├── tasks.js         # CRUD de tarefas
-│   │   └── notes.js         # CRUD de notas
+│   │   ├── auth.js            # Rotas de autenticação
+│   │   ├── tasks.js           # Rotas de tarefas
+│   │   └── notes.js           # Rotas de notas
 │   ├── utils/
-│   │   └── emailService.js  # Serviço de email
-│   ├── .env.example         # Template de variáveis
-│   ├── package.json
-│   └── server.js            # Servidor principal
-├── src/
+│   │   └── emailService.js    # Serviço de envio de emails
+│   ├── .env                   # Variáveis de ambiente
+│   ├── server.js              # Entry point do servidor
+│   └── package.json
+│
+├── src/                        # Código fonte React
 │   ├── config/
-│   │   └── api.js           # Configuração de API
+│   │   └── api.js             # Configuração da API
 │   ├── services/
-│   │   ├── api.js           # Chamadas à API
-│   │   ├── authService.js   # Lógica de autenticação
-│   │   └── dataService.js   # Serviços auxiliares
+│   │   ├── api.js             # Cliente HTTP
+│   │   ├── authService.js     # Serviço de autenticação
+│   │   └── dataService.js     # Serviço de dados
 │   ├── styles/
-│   │   └── auth.css         # Estilos de autenticação
-│   ├── App.jsx              # Componente raiz
-│   ├── main.jsx             # Entry point
-│   └── index.css            # Estilos globais
-├── Components/
+│   │   └── auth.css           # Estilos de autenticação
+│   ├── App.jsx                # Componente raiz e rotas
+│   ├── main.jsx               # Entry point React
+│   └── index.css              # Estilos globais
+│
+├── Pages/                      # Páginas da aplicação
+│   ├── Login.jsx              # Página de login
+│   ├── Register.jsx           # Página de registro
+│   ├── ForgotPassword.jsx     # Recuperação de senha
+│   ├── Dashboard.jsx          # Dashboard principal
+│   └── Kambam.jsx             # Página Kanban
+│
+├── Components/                 # Componentes reutilizáveis
 │   ├── auth/
-│   │   ├── LoginForm.jsx
-│   │   ├── RegisterForm.jsx
-│   │   ├── ForgotPassword.jsx
-│   │   └── VerifyEmail.jsx
+│   │   ├── LoginForm.jsx      # Formulário de login
+│   │   ├── RegisterForm.jsx   # Formulário de registro
+│   │   ├── VerifyEmail.jsx    # Verificação de email
+│   │   └── ForgotPassword.jsx # Recuperação de senha
 │   ├── kanban/
-│   │   ├── KanbanColumn.jsx
-│   │   ├── TaskCard.jsx
-│   │   ├── TaskModal.jsx
+│   │   ├── KanbanColumn.jsx   # Coluna Kanban
+│   │   ├── TaskCard.jsx       # Card de tarefa
+│   │   ├── TaskModal.jsx      # Modal de edição
 │   │   └── DragOverlayCard.jsx
 │   └── notes/
-│       └── NoteSidebar.jsx
-├── Pages/
-│   ├── Login.jsx
-│   ├── Register.jsx
-│   ├── Dashboard.jsx
-│   └── Kambam.jsx
-├── .gitignore
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── GUIA_DEPLOY.md          # Guia completo de deploy
-├── DEPLOY_RAPIDO.md        # Deploy em 15 minutos
-└── README.md               # Este arquivo
+│       └── NoteSidebar.jsx    # Sidebar de notas
+│
+├── Entities/                   # Schemas JSON
+│   ├── task.JSON              # Estrutura de tarefa
+│   └── Note.JSON              # Estrutura de nota
+│
+├── index.html                  # HTML principal
+├── vite.config.js             # Configuração Vite
+├── tailwind.config.js         # Configuração Tailwind
+├── postcss.config.js          # Configuração PostCSS
+├── package.json               # Dependências frontend
+├── README.md                  # Este arquivo
+├── DESENVOLVIMENTO.md         # Processo de desenvolvimento
+└── ARQUITETURA.md            # Documentação técnica
 ```
 
 ---
 
-## 🌐 Deploy para Produção
+## 🌐 Deploy
 
-### 🚀 Deploy Rápido (15 minutos)
-Siga o [DEPLOY_RAPIDO.md](DEPLOY_RAPIDO.md) para colocar no ar rapidamente usando:
-- **MongoDB Atlas** (Banco de dados gratuito)
-- **Railway** (Backend gratuito)
-- **Vercel** (Frontend gratuito)
+### Opções de Deploy
 
-### 📚 Deploy Completo
-Para instruções detalhadas e alternativas, consulte [GUIA_DEPLOY.md](GUIA_DEPLOY.md)
+#### Backend
+- **Railway** - Recomendado
+- **Render**
+- **Heroku**
+- **DigitalOcean**
 
-### 💰 Custo
-**100% GRATUITO** usando os planos free tier:
-- MongoDB Atlas: 512MB
-- Railway: 500h/mês
-- Vercel: Unlimited
-- SendGrid: 100 emails/dia
+#### Frontend
+- **Vercel** - Recomendado
+- **Netlify**
+- **GitHub Pages**
 
----
+### Configuração para Produção
 
-## 📸 Screenshots
-
-### Tela de Login
-- Design moderno com gradiente slate
-- Login com email/senha ou Google
-- Ícone de visualização de senha
-- Recuperação de senha
-- Rodapé personalizado
-
-### Dashboard Kanban
-- 3 colunas customizáveis
-- Drag-and-drop com feedback visual
-- Cards coloridos por prioridade
-- Contador de tarefas por coluna
-
-### Sistema de Notas
-- Sidebar flutuante
-- Criação rápida
-- Persistência automática
+1. **Backend**: Configure as variáveis de ambiente no serviço de hospedagem
+2. **Frontend**: Atualize a URL da API em `src/config/api.js`
+3. **MongoDB**: Use MongoDB Atlas para produção
+4. **Email**: Configure SMTP com Gmail ou SendGrid
 
 ---
 
-## 🔑 Variáveis de Ambiente
+## 📚 Documentação Adicional
 
-### Backend (.env)
-```env
-MONGODB_URI=mongodb://localhost:27017/flowduo
-GOOGLE_CLIENT_ID=seu_client_id
-GOOGLE_CLIENT_SECRET=seu_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
-JWT_SECRET=sua_chave_secreta_min_32_caracteres
-NODE_ENV=development
-PORT=5000
-FRONTEND_URL=http://localhost:5173
-EMAIL_HOST=sandbox.smtp.mailtrap.io
-EMAIL_PORT=2525
-EMAIL_USER=seu_user_mailtrap
-EMAIL_PASSWORD=sua_senha_mailtrap
-EMAIL_FROM=noreply@kambam.com
-```
-
-### Frontend (.env)
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+- **[DESENVOLVIMENTO.md](DESENVOLVIMENTO.md)** - Processo completo de desenvolvimento
+- **[ARQUITETURA.md](ARQUITETURA.md)** - Arquitetura e decisões técnicas
 
 ---
 
-## 🧪 Testando
+## 🔒 Segurança
 
-### Testes Manuais
-1. **Autenticação**
-   - Criar nova conta
-   - Verificar email
-   - Login com email/senha
-   - Login com Google
-   - Recuperar senha
-
-2. **Tarefas**
-   - Criar tarefa
-   - Editar tarefa
-   - Mover entre colunas (drag-and-drop)
-   - Deletar tarefa
-   - Filtrar por prioridade
-
-3. **Notas**
-   - Criar nota
-   - Editar nota
-   - Deletar nota
-
----
-
-## 📝 API Endpoints
-
-### Autenticação
-- `POST /api/auth/register` - Criar conta
-- `POST /api/auth/login` - Fazer login
-- `POST /api/auth/verify-email` - Verificar email
-- `POST /api/auth/forgot-password` - Solicitar reset de senha
-- `POST /api/auth/reset-password` - Redefinir senha
-- `GET /api/auth/google` - Login com Google
-- `GET /api/auth/google/callback` - Callback do Google
-- `GET /api/auth/me` - Obter usuário atual
-
-### Tarefas
-- `GET /api/tasks` - Listar todas as tarefas
-- `GET /api/tasks/:id` - Obter tarefa específica
-- `POST /api/tasks` - Criar nova tarefa
-- `PUT /api/tasks/:id` - Atualizar tarefa
-- `DELETE /api/tasks/:id` - Deletar tarefa
-
-### Notas
-- `GET /api/notes` - Listar todas as notas
-- `POST /api/notes` - Criar nova nota
-- `PUT /api/notes/:id` - Atualizar nota
-- `DELETE /api/notes/:id` - Deletar nota
+- ✅ Senhas armazenadas com hash bcrypt (10 rounds)
+- ✅ JWT tokens com expiração de 7 dias
+- ✅ Proteção contra brute force
+- ✅ Verificação obrigatória de email
+- ✅ CORS configurado corretamente
+- ✅ Validações no frontend e backend
+- ✅ Tokens de email com hash SHA-256
+- ✅ Tokens de reset com expiração de 1 hora
 
 ---
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Para contribuir:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
----
-
-## 🐛 Problemas Conhecidos e Soluções
-
-### CORS Error
-**Solução**: Verifique se `FRONTEND_URL` está corretamente configurado no backend
-
-### MongoDB Connection Error
-**Solução**: Certifique-se de que o MongoDB está rodando localmente ou a string de conexão do Atlas está correta
-
-### Google OAuth 400 Error
-**Solução**: Consulte [CONFIGURACAO_GOOGLE_OAUTH.md](CONFIGURACAO_GOOGLE_OAUTH.md)
-
-### Email não envia
-**Solução**: Verifique credenciais do Mailtrap/SendGrid no .env
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT.
 
 ---
 
-## 👨‍💻 Desenvolvedor
+## 👨‍💻 Autor
 
-**Mateus Coelho**
-
-- 💼 LinkedIn: [Seu LinkedIn]
-- 🐙 GitHub: [Seu GitHub]
-- 📧 Email: [Seu Email]
-
----
-
-## 🙏 Agradecimentos
-
-- [React](https://reactjs.org/)
-- [Node.js](https://nodejs.org/)
-- [MongoDB](https://www.mongodb.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [dnd-kit](https://dndkit.com/)
-- [Lucide Icons](https://lucide.dev/)
+Desenvolvido com ❤️ 
 
 ---
 
 <div align="center">
 
-### ⭐ Se este projeto foi útil, deixe uma estrela!
-
-Made with ❤️ by Mateus Coelho
+**[⬆ Voltar ao topo](#-flowduo---sistema-de-gerenciamento-de-tarefas-kanban)**
 
 </div>

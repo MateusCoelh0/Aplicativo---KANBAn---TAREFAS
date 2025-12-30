@@ -407,7 +407,9 @@ Este projeto está sob a licença MIT.
 
 ## 👨‍💻 Autor
 
-Desenvolvido com ❤️ 
+Desenvolvido por Mateus Coelho 😎
+Auxilio de IA . Claude Sonnet 4.5
+Essa documentação foi desenvolvida com IA
 
 ---
 

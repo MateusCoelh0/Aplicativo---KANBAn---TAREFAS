@@ -16,10 +16,29 @@ const PORT = process.env.PORT || 5000;
 // Conectar ao MongoDB
 connectDB();
 
+// Lista de origens permitidas
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://aplicativo-kambam-tarefas.vercel.app',
+  'https://www.flowduo.com.br',
+  'https://flowduo.com.br',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 // Middlewares
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+      // Permitir requisições sem origin (apps mobile, Postman, etc)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log('❌ Origem bloqueada pelo CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

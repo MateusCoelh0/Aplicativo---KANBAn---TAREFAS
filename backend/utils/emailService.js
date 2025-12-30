@@ -1,30 +1,15 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-// Configurar o transporter de email
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.umbler.com',
-  port: parseInt(process.env.EMAIL_PORT) || 587,
-  secure: false, // true para 465, false para 587
-  auth: {
-    user: process.env.EMAIL_USER || 'kanban@flowduo.com.br',
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false // Aceitar certificados auto-assinados
-  },
-  debug: true, // Ativar logs detalhados
-  logger: true // Mostrar logs no console
-});
+// Inicializar Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Verificar conexão
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Erro na configuração de email:', error);
-  } else {
-    console.log('✅ Servidor de email pronto para enviar mensagens');
-    console.log(`📧 Email configurado: ${process.env.EMAIL_USER}`);
-  }
-});
+// Log de configuração (sem expor a chave)
+if (!process.env.RESEND_API_KEY) {
+  console.error('❌ RESEND_API_KEY não configurada! Configure no Render Dashboard.');
+} else {
+  console.log('✅ Resend configurado com sucesso');
+  console.log(`📧 Email remetente: ${process.env.EMAIL_FROM || 'noreply@flowduo.com.br'}`);
+}
 
 /**
  * Enviar email de verificação
@@ -33,8 +18,8 @@ export const sendVerificationEmail = async (email, verificationToken) => {
   try {
     const verificationUrl = `${process.env.FRONTEND_URL || 'https://www.flowduo.com.br'}/verify-email?token=${verificationToken}`;
 
-    const mailOptions = {
-      from: `"FlowDuo - Kanban" <${process.env.EMAIL_USER || 'kanban@flowduo.com.br'}>`,
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'FlowDuo <onboarding@resend.dev>',
       to: email,
       subject: '✅ Verifique seu email - FlowDuo',
       html: `
@@ -104,14 +89,22 @@ export const sendVerificationEmail = async (email, verificationToken) => {
         </body>
         </html>
       `,
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('❌ Erro ao enviar email de verificação:', error);
+      throw new Error(`Falha ao enviar email: ${error.message}`);
+    }
+
     console.log(`✅ Email de verificação enviado para ${email}`);
-    return { success: true, message: 'Email de verificação enviado' };
+    console.log(`📬 ID da mensagem: ${data?.id}`);
+    return { success: true, message: 'Email de verificação enviado', messageId: data?.id };
   } catch (error) {
-    console.error('❌ Erro ao enviar email de verificação:', error);
-    return { success: false, error: error.message };
+    console.error('❌ Erro crítico no envio de email:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Erro desconhecido ao enviar email' 
+    };
   }
 };
 
@@ -122,8 +115,8 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
   try {
     const resetUrl = `${process.env.FRONTEND_URL || 'https://www.flowduo.com.br'}/reset-password?token=${resetToken}`;
 
-    const mailOptions = {
-      from: `"FlowDuo - Kanban" <${process.env.EMAIL_USER || 'kanban@flowduo.com.br'}>`,
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'FlowDuo <onboarding@resend.dev>',
       to: email,
       subject: '🔒 Redefinir sua senha - FlowDuo',
       html: `
@@ -195,13 +188,21 @@ export const sendPasswordResetEmail = async (email, resetToken) => {
         </body>
         </html>
       `,
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('❌ Erro ao enviar email de reset:', error);
+      throw new Error(`Falha ao enviar email: ${error.message}`);
+    }
+
     console.log(`✅ Email de reset enviado para ${email}`);
-    return { success: true, message: 'Email de reset enviado' };
+    console.log(`📬 ID da mensagem: ${data?.id}`);
+    return { success: true, message: 'Email de reset enviado', messageId: data?.id };
   } catch (error) {
-    console.error('❌ Erro ao enviar email de reset:', error);
-    return { success: false, error: error.message };
+    console.error('❌ Erro crítico ao enviar email de reset:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Erro desconhecido ao enviar email' 
+    };
   }
 };

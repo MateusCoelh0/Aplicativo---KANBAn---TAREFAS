@@ -403,7 +403,10 @@ router.get(
       );
 
       // Redirecionar para o frontend com o token
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const frontendUrl = process.env.FRONTEND_URL || 
+        (process.env.NODE_ENV === 'production' 
+          ? 'https://www.flowduo.com.br' 
+          : 'http://localhost:5173');
       const userData = JSON.stringify({
         id: req.user._id,
         name: req.user.name,
@@ -417,7 +420,11 @@ router.get(
       );
     } catch (error) {
       console.error('Erro no callback do Google:', error);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+      const frontendUrl = process.env.FRONTEND_URL || 
+        (process.env.NODE_ENV === 'production' 
+          ? 'https://www.flowduo.com.br' 
+          : 'http://localhost:5173');
+      res.redirect(`${frontendUrl}/login?error=auth_failed`);
     }
   }
 );

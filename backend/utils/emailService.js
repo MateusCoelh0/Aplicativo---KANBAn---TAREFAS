@@ -1,91 +1,116 @@
 import nodemailer from 'nodemailer';
 
 // Configurar o transporter de email
-let transporter;
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST || 'smtp.umbler.com',
+  port: parseInt(process.env.EMAIL_PORT) || 587,
+  secure: false, // true para 465, false para 587
+  auth: {
+    user: process.env.EMAIL_USER || 'kanban@flowduo.com.br',
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false // Aceitar certificados auto-assinados
+  },
+  debug: true, // Ativar logs detalhados
+  logger: true // Mostrar logs no console
+});
 
-if (process.env.NODE_ENV === 'production') {
-  // PRODUÇÃO: SendGrid, AWS SES, Mailgun, etc.
-  const emailService = process.env.EMAIL_SERVICE;
-  
-  if (emailService === 'sendgrid') {
-    transporter = nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY,
-      },
-    });
-  } else if (emailService === 'ses') {
-    // AWS SES
-    transporter = nodemailer.createTransport({
-      host: process.env.SES_HOST,
-      port: 587,
-      auth: {
-        user: process.env.SES_USER,
-        pass: process.env.SES_PASSWORD,
-      },
-    });
+// Verificar conexão
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Erro na configuração de email:', error);
   } else {
-    // Gmail ou outro serviço
-    transporter = nodemailer.createTransport({
-      service: emailService || 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+    console.log('✅ Servidor de email pronto para enviar mensagens');
+    console.log(`📧 Email configurado: ${process.env.EMAIL_USER}`);
   }
-} else {
-  // DESENVOLVIMENTO: Mailtrap
-  transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'live.smtp.mailtrap.io',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-  
-  console.log('📧 Email configurado com Mailtrap');
-}
+});
 
 /**
  * Enviar email de verificação
  */
 export const sendVerificationEmail = async (email, verificationToken) => {
   try {
-    const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.FRONTEND_URL || 'https://www.flowduo.com.br'}/verify-email?token=${verificationToken}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@kanban.com',
+      from: `"FlowDuo - Kanban" <${process.env.EMAIL_USER || 'kanban@flowduo.com.br'}>`,
       to: email,
-      subject: 'Verifique seu email - KANBAN',
+      subject: '✅ Verifique seu email - FlowDuo',
       html: `
-        <h2>Bem-vindo ao KANBAN!</h2>
-        <p>Para completar seu registro, clique no link abaixo para verificar seu email:</p>
-        <a href="${verificationUrl}" style="
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #4CAF50;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          margin: 20px 0;
-        ">Verificar Email</a>
-        <p>Ou copie e cole este link no seu navegador:</p>
-        <p>${verificationUrl}</p>
-        <p>Este link expira em 24 horas.</p>
-        <hr>
-        <p>Se você não criou esta conta, ignore este email.</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
+          <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #475569 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">FlowDuo</h1>
+              <p style="color: #cbd5e1; margin: 10px 0 0; font-size: 14px;">Organize suas tarefas com eficiência</p>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 40px 30px;">
+              <h2 style="color: #1e293b; margin: 0 0 20px; font-size: 24px; font-weight: 600;">Bem-vindo ao FlowDuo! 🎉</h2>
+              
+              <p style="color: #475569; line-height: 1.6; margin: 0 0 20px; font-size: 16px;">
+                Obrigado por se cadastrar! Para começar a usar o FlowDuo e gerenciar suas tarefas, precisamos confirmar seu email.
+              </p>
+              
+              <p style="color: #475569; line-height: 1.6; margin: 0 0 30px; font-size: 16px;">
+                Clique no botão abaixo para verificar seu email:
+              </p>
+              
+              <!-- Button -->
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${verificationUrl}" style="
+                  display: inline-block;
+                  padding: 16px 40px;
+                  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                  color: white;
+                  text-decoration: none;
+                  border-radius: 8px;
+                  font-weight: 600;
+                  font-size: 16px;
+                  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                ">Verificar Meu Email</a>
+              </div>
+              
+              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 30px 0 10px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                <strong>Ou copie e cole este link no seu navegador:</strong><br>
+                <a href="${verificationUrl}" style="color: #3b82f6; word-break: break-all;">${verificationUrl}</a>
+              </p>
+              
+              <p style="color: #94a3b8; font-size: 13px; margin: 20px 0 0;">
+                ⏱️ Este link expira em 24 horas.
+              </p>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+              <p style="color: #64748b; font-size: 13px; margin: 0 0 10px;">
+                Se você não criou esta conta, pode ignorar este email com segurança.
+              </p>
+              <p style="color: #94a3b8; font-size: 12px; margin: 10px 0 0;">
+                © ${new Date().getFullYear()} FlowDuo. Todos os direitos reservados.
+              </p>
+            </div>
+            
+          </div>
+        </body>
+        </html>
       `,
     };
 
     await transporter.sendMail(mailOptions);
+    console.log(`✅ Email de verificação enviado para ${email}`);
     return { success: true, message: 'Email de verificação enviado' };
   } catch (error) {
-    console.error('Erro ao enviar email de verificação:', error);
+    console.error('❌ Erro ao enviar email de verificação:', error);
     return { success: false, error: error.message };
   }
 };
@@ -95,34 +120,88 @@ export const sendVerificationEmail = async (email, verificationToken) => {
  */
 export const sendPasswordResetEmail = async (email, resetToken) => {
   try {
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://www.flowduo.com.br'}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@kambam.com',
+      from: `"FlowDuo - Kanban" <${process.env.EMAIL_USER || 'kanban@flowduo.com.br'}>`,
       to: email,
-      subject: 'Redefinir sua senha - KAMBAM',
+      subject: '🔒 Redefinir sua senha - FlowDuo',
       html: `
-        <h2>Solicitação de Reset de Senha</h2>
-        <p>Você solicitou um reset de senha. Clique no link abaixo:</p>
-        <a href="${resetUrl}" style="
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #4CAF50;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          margin: 20px 0;
-        ">Redefinir Senha</a>
-        <p>Este link expira em 1 hora.</p>
-        <hr>
-        <p>Se você não solicitou isto, ignore este email.</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
+          <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">🔐 Redefinir Senha</h1>
+              <p style="color: #fecaca; margin: 10px 0 0; font-size: 14px;">FlowDuo - Kanban</p>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 40px 30px;">
+              <h2 style="color: #1e293b; margin: 0 0 20px; font-size: 24px; font-weight: 600;">Solicitação de Reset de Senha</h2>
+              
+              <p style="color: #475569; line-height: 1.6; margin: 0 0 20px; font-size: 16px;">
+                Recebemos uma solicitação para redefinir a senha da sua conta FlowDuo.
+              </p>
+              
+              <p style="color: #475569; line-height: 1.6; margin: 0 0 30px; font-size: 16px;">
+                Clique no botão abaixo para criar uma nova senha:
+              </p>
+              
+              <!-- Button -->
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${resetUrl}" style="
+                  display: inline-block;
+                  padding: 16px 40px;
+                  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                  color: white;
+                  text-decoration: none;
+                  border-radius: 8px;
+                  font-weight: 600;
+                  font-size: 16px;
+                  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+                ">Redefinir Minha Senha</a>
+              </div>
+              
+              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 30px 0 10px; padding: 15px; background: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                <strong>⏱️ Este link expira em 1 hora.</strong><br>
+                Por segurança, o link só pode ser usado uma vez.
+              </p>
+              
+              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 30px 0 10px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                <strong>Ou copie e cole este link:</strong><br>
+                <a href="${resetUrl}" style="color: #ef4444; word-break: break-all;">${resetUrl}</a>
+              </p>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+              <p style="color: #64748b; font-size: 13px; margin: 0 0 10px;">
+                ⚠️ Se você não solicitou esta alteração, ignore este email com segurança.<br>
+                Sua senha permanecerá inalterada.
+              </p>
+              <p style="color: #94a3b8; font-size: 12px; margin: 10px 0 0;">
+                © ${new Date().getFullYear()} FlowDuo. Todos os direitos reservados.
+              </p>
+            </div>
+            
+          </div>
+        </body>
+        </html>
       `,
     };
 
     await transporter.sendMail(mailOptions);
+    console.log(`✅ Email de reset enviado para ${email}`);
     return { success: true, message: 'Email de reset enviado' };
   } catch (error) {
-    console.error('Erro ao enviar email de reset:', error);
+    console.error('❌ Erro ao enviar email de reset:', error);
     return { success: false, error: error.message };
   }
 };

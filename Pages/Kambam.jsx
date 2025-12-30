@@ -11,11 +11,12 @@ import {
   closestCorners,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
 } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 
 export default function Kanban() {
   const navigate = useNavigate();
@@ -33,7 +34,15 @@ export default function Kanban() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      distance: 8,
+      activationConstraint: {
+        distance: 1,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 10,
+      },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -99,50 +108,62 @@ export default function Kanban() {
 
     if (!over) return;
 
-    const activeTask = tasks.find(t => t._id === active.id);
+    const activeId = active.id;
+    const overId = over.id;
+
+    const activeTask = tasks.find(t => t._id === activeId);
     if (!activeTask) return;
 
-    const targetStatus = over.id;
+    // Determinar o status de destino
+    let targetStatus;
+    const overTask = tasks.find(t => t._id === overId);
     
-    // Validar se o status existe
-    if (!['todo', 'in_progress', 'done'].includes(targetStatus)) {
+    if (overTask) {
+      // Se soltou em cima de outro card, usar o status desse card
+      targetStatus = overTask.status;
+    } else if (['todo', 'in_progress', 'done'].includes(overId)) {
+      // Se soltou na coluna vazia
+      targetStatus = overId;
+    } else {
       return;
     }
 
-    try {
-      // Se for movido para um status diferente
+    // Atualizar estado local IMEDIATAMENTE
+    setTasks(prevTasks => {
+      const oldIndex = prevTasks.findIndex(t => t._id === activeId);
+      const newIndex = overTask 
+        ? prevTasks.findIndex(t => t._id === overId)
+        : prevTasks.filter(t => t.status === targetStatus).length;
+
+      // Se mudou de status
       if (activeTask.status !== targetStatus) {
-        const tasksInTargetStatus = tasks.filter(t => t.status === targetStatus);
-        const res = await tasksAPI.update(
-          activeTask._id,
-          {
-            status: targetStatus,
-            order: tasksInTargetStatus.length,
-          },
-          token
+        const updated = prevTasks.map(t => 
+          t._id === activeId 
+            ? { ...t, status: targetStatus, order: newIndex }
+            : t
         );
-        if (res.success) {
-          loadUserAndTasks();
-        } else {
-          setError(res.message);
-        }
-      } else {
-        // Se for reordenado dentro do mesmo status
-        const res = await tasksAPI.update(
-          activeTask._id,
-          {
-            status: targetStatus,
-          },
-          token
-        );
-        if (res.success) {
-          loadUserAndTasks();
-        } else {
-          setError(res.message);
-        }
+        return updated;
       }
+
+      // Se apenas mudou ordem na mesma coluna
+      if (oldIndex !== newIndex) {
+        return arrayMove(prevTasks, oldIndex, newIndex);
+      }
+
+      return prevTasks;
+    });
+
+    // Atualizar no backend em background
+    try {
+      await tasksAPI.update(
+        activeId,
+        { status: targetStatus },
+        token
+      );
     } catch (err) {
-      setError('Erro ao mover tarefa: ' + err.message);
+      console.error('Erro ao atualizar tarefa:', err);
+      // Reverter se der erro
+      loadUserAndTasks();
     }
   };
 
@@ -265,16 +286,16 @@ export default function Kanban() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col relative overflow-hidden">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
+          <div className="flex items-center justify-between gap-1 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-3 min-w-0 flex-1">
               {/* Logo FlowDuo */}
               <motion.div 
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 sm:gap-2"
                 whileHover={{ scale: 1.02 }}
               >
                 <svg 
-                  className="h-10 w-auto" 
+                  className="h-6 w-auto sm:h-10" 
                   viewBox="0 0 200 80" 
                   xmlns="http://www.w3.org/2000/svg"
                   style={{
@@ -310,40 +331,40 @@ export default function Kanban() {
                 </svg>
               </motion.div>
               
-              <div className="min-w-0">
+              <div className="min-w-0 hidden sm:block">
                 <h1 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight truncate">
                   FlowDuo
                 </h1>
-                <p className="text-xs text-slate-400 hidden sm:block truncate">
+                <p className="text-xs text-slate-400 truncate">
                   {user?.name ? `Bem-vindo, ${user.name}` : 'Organize suas tarefas'}
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <button
                 onClick={() => setNotesOpen(true)}
-                className="p-2 sm:px-4 sm:py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                className="p-2 sm:px-3 sm:py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg flex items-center gap-1.5"
                 title="Notas"
               >
                 <FileText className="h-4 w-4" />
-                <span className="hidden sm:inline">Notas</span>
+                <span className="hidden lg:inline text-sm">Notas</span>
               </button>
               <button
                 onClick={() => handleAddClick('todo')}
-                className="p-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg shadow-lg flex items-center gap-2"
+                className="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg shadow-lg flex items-center gap-1.5"
                 title="Nova Tarefa"
               >
                 <Plus className="h-4 w-4" />
-                <span className="hidden md:inline">Nova Tarefa</span>
+                <span className="hidden lg:inline text-sm">Nova Tarefa</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="p-2 sm:px-4 sm:py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
+                className="hidden sm:flex p-2 sm:px-3 sm:py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg items-center gap-1.5"
                 title="Sair"
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sair</span>
+                <span className="hidden lg:inline text-sm">Sair</span>
               </button>
             </div>
           </div>
@@ -368,14 +389,21 @@ export default function Kanban() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto py-4 sm:py-6">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
           onDragStart={(event) => setActiveDragId(event.active.id)}
           onDragEnd={handleDragEnd}
+          autoScroll={{
+            enabled: true,
+            threshold: { x: 0.2, y: 0.2 },
+            acceleration: 5,
+            interval: 5,
+          }}
         >
-          <div className="flex gap-3 sm:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory">
+          {/* Mobile: Scroll horizontal | Tablet+: Grid */}
+          <div className="lg:grid lg:grid-cols-3 lg:gap-4 md:grid md:grid-cols-2 md:gap-4 md:px-6 flex lg:flex-none md:flex-none overflow-x-auto gap-4 px-4 pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
             {['todo', 'in_progress', 'done'].map((status) => (
               <KanbanColumn
                 key={status}
@@ -389,71 +417,67 @@ export default function Kanban() {
           </div>
 
           {/* Drag Overlay - Preview do card sendo arrastado */}
-          <DragOverlay dropAnimation={{
-            duration: 200,
-            easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-          }}>
+          <DragOverlay 
+            dropAnimation={{
+              duration: 300,
+              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+            }}
+          >
             {activeDragId ? (
-              <motion.div
-                className="bg-white rounded-lg shadow-2xl border-2 border-blue-400 p-4 cursor-grabbing transform rotate-3"
-                style={{ width: '360px' }}
-                initial={{ scale: 1, rotate: 0 }}
-                animate={{ scale: 1.05, rotate: 3 }}
+              <div
+                className="bg-white rounded-xl shadow-2xl border-2 border-blue-500 p-3.5 w-full max-w-sm opacity-90"
+                style={{ cursor: 'grabbing' }}
               >
                 {(() => {
                   const task = tasks.find(t => t._id === activeDragId);
                   if (!task) return null;
                   
-                  const priorityColors = {
+                  const priorityBadge = {
                     alta: 'bg-red-100 text-red-700',
-                    média: 'bg-yellow-100 text-yellow-700',
+                    média: 'bg-amber-100 text-amber-700',
                     baixa: 'bg-green-100 text-green-700',
                   };
                   
                   return (
                     <div className="relative">
-                      {/* Indicador de arrasto */}
-                      <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
-                        Arrastando...
-                      </div>
-                      
-                      <div className="flex items-start justify-between gap-2 mb-3">
-                        <h3 className="font-semibold text-slate-800 flex-1 text-base">
-                          {task.title}
-                        </h3>
-                        <GripVertical className="h-5 w-5 text-blue-400" />
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="font-medium text-slate-800 text-sm flex-1">{task.title}</h3>
+                        <GripVertical className="h-4 w-4 text-blue-500" />
                       </div>
                       
                       {task.description && (
-                        <p className="text-sm text-slate-600 mb-3 line-clamp-3">
+                        <p className="text-xs text-slate-600 mb-2 line-clamp-2">
                           {task.description}
                         </p>
                       )}
                       
-                      <div className="flex items-center justify-between">
-                        <span className={`text-xs px-3 py-1.5 rounded-lg font-medium ${priorityColors[task.priority || 'média']}`}>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] px-2 py-1 rounded-md font-medium ${priorityBadge[task.priority || 'média']}`}>
                           {task.priority || 'Média'}
                         </span>
                         {task.dueDate && (
-                          <span className="text-xs text-slate-500 font-medium">
-                            📅 {new Date(task.dueDate).toLocaleDateString('pt-BR')}
+                          <span className="text-[10px] text-slate-400">
+                            {new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                           </span>
                         )}
                       </div>
-                      
-                      {task.assignee && (
-                        <div className="mt-3 text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
-                          👤 {task.assignee}
-                        </div>
-                      )}
                     </div>
                   );
                 })()}
-              </motion.div>
+              </div>
             ) : null}
           </DragOverlay>
         </DndContext>
       </main>
+
+      {/* Botão de Logout Flutuante (Mobile) */}
+      <button
+        onClick={handleLogout}
+        className="sm:hidden fixed bottom-6 right-6 p-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg z-40 flex items-center justify-center"
+        title="Sair"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
 
       {/* Rodapé */}
       <footer className="bg-white border-t border-slate-100 mt-auto">
